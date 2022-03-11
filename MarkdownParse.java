@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MarkdownParse {
+    static int totalCount;
     public static Map<String, List<String>> getLinks(File dirOrFile) throws IOException {
         Map<String, List<String>> result = new HashMap<>();
         if(dirOrFile.isDirectory()) {
@@ -30,6 +31,10 @@ public class MarkdownParse {
         }
     }
     public static ArrayList<String> getLinks(String markdown) {
+        if(markdown.contains("]") && markdown.contains("[") && 
+            markdown.contains(")") && markdown.contains("(")) {
+            MarkdownParse.totalCount += 1;
+        }
         ArrayList<String> toReturn = new ArrayList<>();
         // find the next [, then find the ], then find the (, then take up to
         // the next )
@@ -71,6 +76,9 @@ public class MarkdownParse {
             if(endIndex == markdown.length()) {
                 endIndex--;
             }
+            if(startIndex < 0) {
+                startIndex = 0;
+            }
             toReturn.add(markdown.substring(startIndex, endIndex + 1));
         }
         return toReturn;
@@ -78,6 +86,7 @@ public class MarkdownParse {
     public static void main(String[] args) throws IOException {
 		Path fileName = Path.of(args[0]);
         File file = new File(fileName.toString());
+        MarkdownParse.totalCount = 0;
         Map<String, List<String>> links = getLinks(file);
         System.out.println(links);
     }
